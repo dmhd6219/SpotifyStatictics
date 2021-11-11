@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+        integrity="sha512-oHDEc8Xed4hiW6CxD7qjbnI+B07vDdX7hEPTvn9pSZO1bcRqHp8mj9pyr+8RVC2GmtEfI2Bi9Ke9Ass0as+zpg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+    <link rel="stylesheet" href="/static/style.css" media="screen" />
+
+
+
+
+    <link href="https://fonts.googleapis.com/css?family=Righteous&subset=latin,latin-ext" rel='stylesheet'
+        type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,700" rel='stylesheet' type='text/css'>
+
+    <noscript>
+        <style>.body_hide{opacity: 1 !important;}</style>
+    </noscript>
+    <title>svyatoslavsvyatkin</title>
+</head>
+
+<body class="container body_hide">
+    <header class='navbar'>
+        <nav>
+            <ul>
+                <li><a href="/" class="link">svyatoslavsvyatkin</a></li>
+                <li><a href="/profiles" class="link">Profiles</a></li>
+                <li><a href="/stats" class="link">Statistics</a></li>
+            </ul>
+
+            <div class='nav-profile'>
+                <img src="{{ profile['images'][0]['url'] }}">
+                <div class='pop'>
+                    <a href='/me' class="link">{{ profile['display_name'] }}</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    {% block content %}
+
+    {% endblock %}
+
+    <footer class="footer">
+        <div class="column footer-block">
+            <div>Copyright © 2021</div>
+            <div>All rights reserved.</div>
+            <div>Not affiliated with Spotify</div>
+        </div>
+        <div class="column footer-block">
+            <a href="/" class="link">svyatoslavsvyatkin</a>
+        </div>
+        <div class="column footer-block">
+            <a href="#" class="link">Terms of service</a>
+            <a href="#" class="link">Privacy policy</a>
+        </div>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

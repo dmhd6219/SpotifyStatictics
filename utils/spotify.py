@@ -22,7 +22,7 @@ def session_cache_path():
 
 
 def spotify_login_required(func):
-    def wrapper(**kwargs):
+    def wrapper(*args, **kwargs):
         if not session.get('uuid'):
             # Step 1. Visitor is unknown, give random ID
             print('# Step 1. Visitor is unknown, give random ID')
@@ -52,7 +52,10 @@ def spotify_login_required(func):
                 nickname = account['display_name']
                 email = account['email']
 
-                tracks = get_top_tracks(spotify)
+                tracks = []
+                for i in range(5):
+                    for track in spotify.current_user_top_tracks(limit=20, offset=20 * i, time_range='long_term')['items']:
+                        tracks.append(track)
 
                 data = {'nickname': nickname, 'email': email, 'top_tracks': tracks}
 
@@ -76,15 +79,10 @@ def spotify_login_required(func):
         # user.spotify_id = spotify.current_user()['id']
         # db_sess.commit()
 
-        return func(**kwargs, spotify=spotify)
+        if args:
+            return func(*args, **kwargs)
+
+        return func(*args, **kwargs, spotify=spotify)
 
     wrapper.__name__ = func.__name__
     return wrapper
-
-
-def get_top_tracks(spotify: spotipy.Spotify):
-    tracks = []
-    for i in range(5):
-        for track in spotify.current_user_top_tracks(limit=20, offset=20 * i, time_range='long_term')['items']:
-            tracks.append(track)
-    return tracks
