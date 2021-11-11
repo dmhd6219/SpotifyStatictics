@@ -2,8 +2,13 @@ import json
 import os
 import uuid
 
+import requests
 import spotipy
 from flask import session, request, redirect
+
+import api
+from data import db_session
+from data.users import User
 
 caches_folder = './.spotify_caches/'
 if not os.path.exists(caches_folder):
@@ -42,27 +47,28 @@ def spotify_login_required(func):
             # Step 3. Being redirected from Spotify auth page
             print('# Step 3. Being redirected from Spotify auth page')
             token = request.args.get("code")
-            print(token)
-            auth_manager.get_access_token(token)
+
+            token = auth_manager.get_access_token(token)['access_token']
 
             if session.get('new'):
                 spotify = spotipy.Spotify(auth_manager=auth_manager)
 
                 account = spotify.me()
-                nickname = account['display_name']
                 email = account['email']
 
-                tracks = []
-                for i in range(5):
-                    for track in spotify.current_user_top_tracks(limit=20, offset=20 * i, time_range='long_term')['items']:
-                        tracks.append(track)
+                # creating user in db
 
-                data = {'nickname': nickname, 'email': email, 'top_tracks': tracks}
+                user = User()
+                user.email = email
+                user.spotify_id = account['id']
+                user.spotify_token = token
 
-                with open(f'./data/{session.get("uuid")}.json', 'w') as file:
-                    json.dump(data, file)
+                user.favorite_track = api.stats(spotify, 'tracks', 'long').json['data'][0]['id']
+                user.favorite_artist = api.stats(spotify, 'artists', 'long').json['data'][0]['id']
 
-                session.pop('new')
+                db_sess = db_session.create_session()
+                db_sess.add(user)
+                db_sess.commit()
 
             return redirect('/')
 
@@ -86,3 +92,27 @@ def spotify_login_required(func):
 
     wrapper.__name__ = func.__name__
     return wrapper
+
+
+class TokenSpotify():
+    def __init__(self, token):
+        self.token = token
+
+    def get(self, method, **kwargs):
+        return requests.get(f'https://api.spotify.com/v1/{method}', headers={
+            'Authorization': f'Bearer {self.token}'}, data=kwargs).json()
+
+    def me(self):
+        return self.get('me')
+
+    def current_playback(self):
+        return self.get('me/player')
+
+    def top(self, type_, **kwargs):
+        return self.get(f'me/top/{type_}', **kwargs)
+
+    def track(self, id_):
+        return self.get(f'tracks/{id_}')
+
+    def artist(self, id_):
+        return self.get(f'artists/{id_}')

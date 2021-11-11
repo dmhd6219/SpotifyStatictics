@@ -129,5 +129,4 @@ dmypy.json
 .pyre/
 /.flask_session/
 /.spotify_caches/
-/data/
-/db/
+/spotify_jsons/

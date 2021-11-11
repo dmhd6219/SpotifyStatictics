@@ -4,6 +4,7 @@ import flask
 from flask import make_response, jsonify
 from spotipy import Spotify
 
+import utils.spotify
 from utils.spotify import spotify_login_required
 
 blueprint = flask.Blueprint(
@@ -13,7 +14,7 @@ blueprint = flask.Blueprint(
 )
 
 
-def stats(spotify: Spotify, category, term):
+def stats(spotify: Spotify or utils.spotify.TokenSpotify, category, term):
     if category not in ('artists', 'tracks'):
         return make_response(jsonify({'error': f'Cant find statistics for "{category}". Use artists or tracks.'}), 404)
     if term not in ('short', 'medium', 'long'):
@@ -39,13 +40,13 @@ def stats(spotify: Spotify, category, term):
     return make_response(jsonify({'error': 'Unknown error'}), 404)
 
 
-def me(spotify: Spotify):
+def me(spotify: Spotify or utils.spotify.TokenSpotify):
     data = spotify.me()
 
     return make_response(jsonify({'success': 'OK', 'data': data}), 200)
 
 
-def playback(spotify: Spotify):
+def playback(spotify: Spotify or utils.spotify.TokenSpotify):
     data = spotify.current_playback()
 
     if data is None:

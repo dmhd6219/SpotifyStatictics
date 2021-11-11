@@ -8,8 +8,11 @@ from flask import Flask, redirect, abort, render_template
 
 from spotipy import Spotify
 
+from data import db_session
+
 import api
-from utils.spotify import spotify_login_required
+from data.users import User
+from utils.spotify import spotify_login_required, TokenSpotify
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(64)
@@ -30,7 +33,7 @@ def index(spotify: Spotify):
 @app.route('/debug')
 @spotify_login_required
 def debug(spotify: Spotify):
-    pprint(api.playback(spotify).json.get('data'))
+    pprint(api.me(spotify).json['data'])
     return 'debugging........'
 
 
@@ -39,14 +42,48 @@ def debug(spotify: Spotify):
 def me(spotify: Spotify):
     data = {
         'profile': api.me(spotify).json['data'],
-        'playback': api.playback(spotify).json.get('data'),
-        'top_track' : api.stats(spotify, 'tracks', 'long').json['data'][0],
-        'top_artist': api.stats(spotify, 'artists', 'long').json['data'][0],
 
     }
+
+    db_sess = db_session.create_session()
+
+    user = db_sess.query(User).filter(User.email == data['profile']['email']).first()
+    if user.link:
+        return redirect(f'/profile/{user.link}')
+    if not user.link:
+        return redirect(f'/profile/{user.spotify_id}')
+
+    data['top_track'] = spotify.track(user.favorite_track)
+    data['top_artist'] = spotify.artist(user.favorite_artist)
+    data['playback'] = api.playback(spotify).json.get('data'),
+
+    return render_template('profile.html', **data)
+
+
+@app.route('/profile/<id>')
+@spotify_login_required
+def profile(spotify: Spotify, id):
+    db_sess = db_session.create_session()
+
+    query = db_sess.query(User).filter(User.link == id)
+    user = query.first()
+    if not user:
+        query = db_sess.query(User).filter(User.spotify_id == id)
+        user = query.first()
+    if not user:
+        abort(404)
+
+    token = user.spotify_token
+    spotify = TokenSpotify(token)
+
+    data = {'profile': api.me(spotify).json['data'], 'playback': api.playback(spotify).json.get('data'),
+            'top_track': spotify.track(user.favorite_track), 'top_artist': spotify.artist(user.favorite_artist)}
+
     return render_template('profile.html', **data)
 
 
 if __name__ == '__main__':
+    db_session.global_init("db/data.sqlite")
+
     app.register_blueprint(api.blueprint)
     app.run(threaded=True, port=8080, debug=True)
