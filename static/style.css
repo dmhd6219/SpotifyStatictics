@@ -1,0 +1,302 @@
+html {
+    font-family: 'quicksand', Arial, sans-serif;
+
+    color: #ffffff;
+    background-color: #202124;
+
+}
+
+.body{
+    
+}
+
+main{
+    margin-top:10%;
+    margin-bottom:10%;
+}
+
+.body_hide {
+	opacity: 0;
+	transition: .9s opacity ease-in-out;
+}
+.body_visible {
+	opacity: 1;
+}
+
+.container {
+    width: 80%;
+    max-width: 1219px;
+    margin: 0 auto;
+
+}
+
+.link {
+    color: #fff; /* Цвет текста */
+    transition: all 0.5s ease;
+    text-decoration: none;
+
+}
+
+.link:hover {
+    color: #1BD954; /* Меняем цвет текста */
+}
+
+.hover-image-scale {
+    display: inline-block;
+    overflow: hidden; /* Скрываем всё за контуром */
+}
+
+.hover-image-scale img {
+    transition: 1s; /* Время эффекта */
+    display: block;
+}
+
+.hover-image-scale img:hover {
+    transform: scale(1.2); /* Увеличиваем масштаб */
+}
+
+.block-65{
+    width: 65%;
+}
+.block-30{
+    width: 30%;
+}
+.block-45{
+    width: 45%;
+
+    margin-top: 10px;
+}
+
+.column{
+    display: flex;
+    flex-direction: column;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    justify-content: space-around;
+}
+
+.navbar{
+    padding-top:15px;
+    
+}
+
+.navbar nav{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+
+}
+
+.navbar nav ul{
+    width: 45%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+.navbar nav ul li{
+    margin-left: 2%;
+    margin-right: 2%;
+    list-style-type: none; /* Убираем маркеры */
+
+    text-align: center;
+}
+
+.pop{
+    background-color: rgb(21, 20, 27);
+    border-radius: 10px;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+
+    padding-left: 10px;
+    padding-right: 10px;
+
+}
+
+.nav-profile{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    width: 35%;
+}
+
+.nav-profile img{
+    width: 30%;
+
+    border-radius: 10px;
+}
+
+.footer{
+    display: flex;
+    flex-direction: column;
+    align-content: space-around;
+    
+    text-align: center;
+
+}
+
+.footer-block{
+    margin:10px;
+}
+
+.profile-block{
+    width:100%;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.profile{
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-between;
+
+    margin: 10px;
+
+}
+
+.profile img{
+    width: 50%;
+
+    border-radius: 10px;
+}
+
+.profile-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.mini-data{
+    display: flex;
+    flex-direction: row;
+}
+
+.data-block{
+    padding-left:5px;
+    padding-right: 5px;
+
+    text-align: center;
+}
+
+.pop-line{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.pop-data{
+    width: 25%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    margin: 5px;
+}
+
+.playing-now{
+    display: flex;
+    flex-direction: column;
+
+    background-color: rgb(21, 20, 27);
+    border-radius: 10px;
+
+    align-items: center;
+    justify-content: space-around;
+
+    text-align: center;
+
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.playing-now img{
+    width: 80%;
+}
+
+
+.card{
+    width: 100%;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+
+  margin-top: 15px;
+  margin-left: 5px;
+  margin-right: 5px;
+
+  border-radius: 10px;
+
+
+  color:white;
+
+  text-align: center;
+  
+  
+  
+    
+}
+
+.blur {
+  background: rgba(255, 255, 255, 0.2); 
+  backdrop-filter: blur(8px);
+
+  height: 100%;
+  width:100%;
+
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+.card img{
+    width:50%;
+
+    border-radius: 10px;
+
+    margin-top: 5%;
+}
+
+.header{
+    margin-top:40px;
+}
+
+@media (min-width:800px){
+    .playing-now{
+        width:30%;
+
+    }
+
+    .card{
+        width: 45%;
+    }
+
+    .profile-block{
+        width: 65%;
+    }
+
+    .nav-profile img{
+        width: 20%;
+    }
+
+    .footer{
+        flex-direction: row;
+        justify-content: space-around;
+    }
+}
