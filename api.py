@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import flask
 from flask import make_response, jsonify
 from spotipy import Spotify
@@ -45,6 +47,9 @@ def me(spotify: Spotify):
 
 def playback(spotify: Spotify):
     data = spotify.current_playback()
+
+    if data is None:
+        return make_response(jsonify({'error': 'Track is not playing rn.'}), 404)
 
     del data['item']['album']['available_markets']
     del data['item']['available_markets']

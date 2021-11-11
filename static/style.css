@@ -223,6 +223,8 @@ main{
 
 .playing-now img{
     width: 80%;
+
+    border-radius: 10px;
 }
 
 
@@ -277,7 +279,7 @@ main{
     margin-top:40px;
 }
 
-@media (min-width:800px){
+@media (min-width:1200px){
     .playing-now{
         width:30%;
 

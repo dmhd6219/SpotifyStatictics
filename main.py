@@ -30,7 +30,7 @@ def index(spotify: Spotify):
 @app.route('/debug')
 @spotify_login_required
 def debug(spotify: Spotify):
-    pprint(api.stats(spotify, 'tracks', 'long').json['data'])
+    pprint(api.playback(spotify).json.get('data'))
     return 'debugging........'
 
 
@@ -39,7 +39,7 @@ def debug(spotify: Spotify):
 def me(spotify: Spotify):
     data = {
         'profile': api.me(spotify).json['data'],
-        'playback' : api.playback(spotify).json['data'],
+        'playback': api.playback(spotify).json.get('data'),
         'top_track' : api.stats(spotify, 'tracks', 'long').json['data'][0],
         'top_artist': api.stats(spotify, 'artists', 'long').json['data'][0],
 
