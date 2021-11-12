@@ -56,6 +56,10 @@ def spotify_login_required(func):
                 account = spotify.me()
                 email = account['email']
 
+                db_sess = db_session.create_session()
+                user = db_sess.query(User).filter(User.email == email).first()
+                if user:
+                    return redirect('/')
                 # creating user in db
 
                 user = User()
@@ -63,10 +67,15 @@ def spotify_login_required(func):
                 user.spotify_id = account['id']
                 user.spotify_token = token
 
-                user.favorite_track = api.stats(spotify, 'tracks', 'long').json['data'][0]['id']
-                user.favorite_artist = api.stats(spotify, 'artists', 'long').json['data'][0]['id']
+                db_sess.add(user)
+                db_sess.commit()
 
-                db_sess = db_session.create_session()
+                stats = api.stats(spotify).json['data']
+
+                user.favorite_track = stats['tracks']['long'][0]['id']
+                user.favorite_artist = stats['artists']['long'][0]['id']
+
+
                 db_sess.add(user)
                 db_sess.commit()
 
@@ -94,25 +103,9 @@ def spotify_login_required(func):
     return wrapper
 
 
-class TokenSpotify():
-    def __init__(self, token):
-        self.token = token
+def top_ids(top):
+    data = []
+    for item in top:
+        data.append(item['id'])
 
-    def get(self, method, **kwargs):
-        return requests.get(f'https://api.spotify.com/v1/{method}', headers={
-            'Authorization': f'Bearer {self.token}'}, data=kwargs).json()
-
-    def me(self):
-        return self.get('me')
-
-    def current_playback(self):
-        return self.get('me/player')
-
-    def top(self, type_, **kwargs):
-        return self.get(f'me/top/{type_}', **kwargs)
-
-    def track(self, id_):
-        return self.get(f'tracks/{id_}')
-
-    def artist(self, id_):
-        return self.get(f'artists/{id_}')
+    return data

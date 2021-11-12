@@ -4,7 +4,7 @@ from pprint import pprint
 
 import flask_session
 from dotenv import load_dotenv
-from flask import Flask, redirect, abort, render_template
+from flask import Flask, redirect, abort, render_template, request
 
 from spotipy import Spotify
 
@@ -12,12 +12,13 @@ from data import db_session
 
 import api
 from data.users import User
-from utils.spotify import spotify_login_required, TokenSpotify
+from utils.spotify import spotify_login_required
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
+app.config['SQLALCHEMY_DATABASE_URI'] = './db/data.sqlite'
 flask_session.Session(app)
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -33,7 +34,7 @@ def index(spotify: Spotify):
 @app.route('/debug')
 @spotify_login_required
 def debug(spotify: Spotify):
-    pprint(api.me(spotify).json['data'])
+    pprint(request.headers)
     return 'debugging........'
 
 
@@ -73,17 +74,15 @@ def profile(spotify: Spotify, id):
     if not user:
         abort(404)
 
-    token = user.spotify_token
-    spotify = TokenSpotify(token)
-
     data = {'profile': api.me(spotify).json['data'], 'playback': api.playback(spotify).json.get('data'),
             'top_track': spotify.track(user.favorite_track), 'top_artist': spotify.artist(user.favorite_artist)}
 
     return render_template('profile.html', **data)
 
 
+
 if __name__ == '__main__':
-    db_session.global_init("db/data.sqlite")
+    db_session.global_init("./db/data.sqlite")
 
     app.register_blueprint(api.blueprint)
     app.run(threaded=True, port=8080, debug=True)

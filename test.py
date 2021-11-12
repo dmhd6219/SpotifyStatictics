@@ -3,13 +3,32 @@ from pprint import pprint
 
 import requests
 
-with open('./.spotify_caches/6984d269-db9c-4c7f-bc28-cce42c3c45b8') as file:
-    token1 = json.load(file)['access_token']
+with open('./.spotify_caches/a5831539-b16a-4c37-a5d2-a5b0b90676d6') as file:
+    token = json.load(file)['access_token']
 
-token2 = 'AQBk1-6S_Xu4n5gfmumJfh2XvjIriSPFUFUdW7DmCK-r9HTlS_eHEErkrS0EpQcfb2qjBF6JaulAJZVZ92bAKS3VtK1l4bx69BandzYWRPmZ3i8KNGSZQG5fiDsaebsVyZgZ25WScK-g5vsgVvMXsdaBTuoJW11-mlZbSxI0fYyn7ppXOBVq9PwUSVhQFgrhI-bkaRRPJO7KJ-_QhN8LRGltSvlBZIE00nRc9jR6B52guF4_XSngD0nrKhptWN2Etwp4kX8msZmw-E9fwNKmd67Ws5ohnLp9T2F-lggGxEI3h1CCnluDKOV5zxHT8wmilAE31esa9vN7KFNHrijE36XMGpKEAp3b6e6olVzRVMX1D8A7quy0C1Bq_IZxmuR3GQSU5ZyOwzueyuHP-y3mCk19i5qDQpg0sB2ZC-Wt9xCBDievywba1QIuPelHQ6Hcn4wNuOqXrjknfa18J_mXwSFaMh9pzsl5GMoxoD7TQjsLSF-4J0oY3L3tdBB0eBzIV-rIz8J9wPaZ-tWo_HkKvQvZLaLg8kM_Ny35VKUJQeW433MB6exG0I1Z8m4lTFmSQRbcvypYWcCQUWg8V9nQwzK48O1nX33uxf72492FAZS-rFZZS507YQkoUtuRVMQfePxK4h696SgNP5fS8vKWW7SDjkXbIQrLtqLc1wEfrUo8HWvTUp4XSg'
+sp_dc = 'AQBQoHtDHBPp0oST7oiof6Njb-3aDqnNeHRlGi3jTF7EeGKT0uypGnwUklatlhtv5hG5PnDv5Xu49arRkBUHC7f_j1pJoytYjzrTo-UojX5awA'
+
+hd = ('Connection', 'keep-alive'), ('Sec-Ch-Ua', '"Microsoft Edge";v="95", "Chromium";v="95", ";Not A Brand";v="99"'), ('Sec-Ch-Ua-Mobile', '?0'), ('Sec-Ch-Ua-Platform', '"Windows"'), ('Upgrade-Insecure-Requests', '1'), ('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36 Edg/95.0.1020.44'), ('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'), ('Purpose', 'prefetch'), ('Sec-Fetch-Site', 'none'), ('Sec-Fetch-Mode', 'navigate'), ('Sec-Fetch-User', '?1'), ('Sec-Fetch-Dest', 'document'), ('Accept-Encoding', 'gzip, deflate, br'), ('Accept-Language', 'ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7')
+
+headers = {'Authorization': f'Bearer {token}'}
+for i in hd:
+    headers[i[0]] = i[1]
 
 
-for token in (token1, token2):
-    pprint(requests.get('https://api.spotify.com/v1/me', headers={
-    'Authorization' : f'Bearer {token}'}).json())
-    print('.................')
+
+pprint(requests.get('https://accounts.spotify.com/login/password', data={
+    'username':'svyatoslavsvyatkin@yandex.ru',
+    'password':'Qweasd228!'
+}).text)
+
+pprint(requests.get('https://guc-spclient.spotify.com/presence-view/v1/buddylist',
+    headers= headers
+    ).json())
+
+print('--------')
+pprint(
+    requests.get('https://open.spotify.com/get_access_token?reason=transport&productType=web_player',
+                 headers={
+                     'Cookie' : f'sp_dc={sp_dc}'
+                 }).json()
+)

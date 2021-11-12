@@ -130,3 +130,4 @@ dmypy.json
 /.flask_session/
 /.spotify_caches/
 /spotify_jsons/
+/db/data.sqlite
