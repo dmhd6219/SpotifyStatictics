@@ -16,17 +16,7 @@ class User(SqlAlchemyBase):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
 
     spotify_id = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    spotify_token = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    spotify_auth_manager = sqlalchemy.Column(sqlalchemy.PickleType)
 
-    favorite_track = sqlalchemy.Column(sqlalchemy.String)
-    favorite_artist = sqlalchemy.Column(sqlalchemy.String)
-
-    top_data = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
-
-    top_tracks_short = sqlalchemy.Column(sqlalchemy.PickleType, nullable=True)
-    top_tracks_medium = sqlalchemy.Column(sqlalchemy.PickleType, nullable=True)
-    top_tracks_long = sqlalchemy.Column(sqlalchemy.PickleType, nullable=True)
-
-    top_artists_short = sqlalchemy.Column(sqlalchemy.PickleType, nullable=True)
-    top_artists_medium = sqlalchemy.Column(sqlalchemy.PickleType, nullable=True)
-    top_artists_long = sqlalchemy.Column(sqlalchemy.PickleType, nullable=True)
+    favorite_track = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    favorite_artist = sqlalchemy.Column(sqlalchemy.String, nullable=True)

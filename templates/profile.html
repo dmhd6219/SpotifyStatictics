@@ -7,7 +7,7 @@
     <div class="profile-block">
 
         <div class="profile">
-            <img src='{{ profile["images"][0]["url"] }}'>
+            <img src={% if profile["images"] %}' {{ profile["images"][0]["url"] }}' {% else %} '/static/img/empty-profile.png' {% endif %}>
             <div class="profile-info">
                 <a class="link data-block" href='#'>{{ profile['display_name'] }}</a>
                 <div class="mini-data">
@@ -50,6 +50,7 @@
     {% endif %}
 
 
+    {% if top_track %}
     <div class="card"
          style="background-image: url('{{ top_track['album']['images'][0]['url'] }}');">
         <div class="blur">
@@ -65,8 +66,10 @@
         </div>
 
     </div>
+    {% endif %}
 
 
+    {% if top_artist %}
     <div class="card"
          style="background-image: url('{{ top_artist['images'][0]['url'] }}');">
 
@@ -82,6 +85,7 @@
         </div>
 
     </div>
+    {% endif %}
 
 </main>
 

@@ -46,17 +46,17 @@ def spotify_login_required(func):
         if request.args.get("code"):
             # Step 3. Being redirected from Spotify auth page
             print('# Step 3. Being redirected from Spotify auth page')
-            token = request.args.get("code")
+            sp_dc_token = request.args.get("code")
 
-            token = auth_manager.get_access_token(token)['access_token']
+            token = auth_manager.get_access_token(sp_dc_token)['access_token']
 
             if session.get('new'):
                 spotify = spotipy.Spotify(auth_manager=auth_manager)
+                db_sess = db_session.create_session()
 
                 account = spotify.me()
                 email = account['email']
 
-                db_sess = db_session.create_session()
                 user = db_sess.query(User).filter(User.email == email).first()
                 if user:
                     return redirect('/')
@@ -65,16 +65,17 @@ def spotify_login_required(func):
                 user = User()
                 user.email = email
                 user.spotify_id = account['id']
-                user.spotify_token = token
+                user.spotify_token = sp_dc_token
 
-                db_sess.add(user)
-                db_sess.commit()
+                top_tracks = api.stats(spotify, 'tracks', 'long').json['data']
+                top_artists = api.stats(spotify, 'artists', 'long').json['data']
 
-                stats = api.stats(spotify).json['data']
+                if top_tracks:
+                    user.favorite_track = top_tracks[0]['id']
+                if top_artists:
+                    user.favorite_artist = top_artists[0]['id']
 
-                user.favorite_track = stats['tracks']['long'][0]['id']
-                user.favorite_artist = stats['artists']['long'][0]['id']
-
+                user.spotify_auth_manager = auth_manager
 
                 db_sess.add(user)
                 db_sess.commit()
@@ -103,9 +104,11 @@ def spotify_login_required(func):
     return wrapper
 
 
-def top_ids(top):
-    data = []
-    for item in top:
-        data.append(item['id'])
+def get_spotify_token(sp_dc):
+    response = requests.get('https://open.spotify.com/get_access_token?reason=transport&productType=web_player',
+                            headers={
+                                'Cookie': f'sp_dc={sp_dc}'
+                            }).json()
 
-    return data
+    return response['accessToken']
+

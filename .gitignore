@@ -131,3 +131,4 @@ dmypy.json
 /.spotify_caches/
 /spotify_jsons/
 /db/data.sqlite
+/passenger_wsgi.py

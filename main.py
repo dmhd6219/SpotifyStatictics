@@ -25,17 +25,17 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
 
-@app.route('/')
-@spotify_login_required
-def index(spotify: Spotify):
-    return 'ok'
-
-
 @app.route('/debug')
 @spotify_login_required
 def debug(spotify: Spotify):
-    pprint(request.headers)
-    return 'debugging........'
+    pprint(api.playback(spotify).json['data'])
+    return ', '.join(os.listdir("../")) + f'<a href="/me">CLICK HERE</a><br>'
+
+
+@app.route('/')
+@spotify_login_required
+def index(spotify: Spotify):
+    return f'<a href="/me">{spotify.me()["display_name"]}</a>'
 
 
 @app.route('/me')
@@ -74,11 +74,17 @@ def profile(spotify: Spotify, id):
     if not user:
         abort(404)
 
-    data = {'profile': api.me(spotify).json['data'], 'playback': api.playback(spotify).json.get('data'),
-            'top_track': spotify.track(user.favorite_track), 'top_artist': spotify.artist(user.favorite_artist)}
+    spotify = Spotify(auth_manager=user.spotify_auth_manager)
+
+    data = {'profile': api.me(spotify).json['data'], 'playback': api.playback(spotify).json.get('data'), }
+
+    if user.favorite_track:
+        data['top_track'] = spotify.track(user.favorite_track)
+
+    if user.favorite_artist:
+        data['top_artist'] = spotify.artist(user.favorite_artist)
 
     return render_template('profile.html', **data)
-
 
 
 if __name__ == '__main__':

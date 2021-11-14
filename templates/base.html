@@ -34,7 +34,7 @@
             </ul>
 
             <div class='nav-profile'>
-                <img src="{{ profile['images'][0]['url'] }}">
+                <img src={% if profile["images"] %}' {{ profile["images"][0]["url"] }}' {% else %} '/static/img/empty-profile.png' {% endif %}>
                 <div class='pop'>
                     <a href='/me' class="link">{{ profile['display_name'] }}</a>
                 </div>

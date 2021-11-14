@@ -3,32 +3,64 @@ from pprint import pprint
 
 import requests
 
-with open('./.spotify_caches/a5831539-b16a-4c37-a5d2-a5b0b90676d6') as file:
-    token = json.load(file)['access_token']
-
 sp_dc = 'AQBQoHtDHBPp0oST7oiof6Njb-3aDqnNeHRlGi3jTF7EeGKT0uypGnwUklatlhtv5hG5PnDv5Xu49arRkBUHC7f_j1pJoytYjzrTo-UojX5awA'
 
-hd = ('Connection', 'keep-alive'), ('Sec-Ch-Ua', '"Microsoft Edge";v="95", "Chromium";v="95", ";Not A Brand";v="99"'), ('Sec-Ch-Ua-Mobile', '?0'), ('Sec-Ch-Ua-Platform', '"Windows"'), ('Upgrade-Insecure-Requests', '1'), ('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36 Edg/95.0.1020.44'), ('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'), ('Purpose', 'prefetch'), ('Sec-Fetch-Site', 'none'), ('Sec-Fetch-Mode', 'navigate'), ('Sec-Fetch-User', '?1'), ('Sec-Fetch-Dest', 'document'), ('Accept-Encoding', 'gzip, deflate, br'), ('Accept-Language', 'ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7')
-
-headers = {'Authorization': f'Bearer {token}'}
-for i in hd:
-    headers[i[0]] = i[1]
+tk = 'AQBEdLRMa4TZJJex7qU9_4zxJhwO6S6hvqzVPnIkrdKGT-ecb-xc_ZctLB1cS2lxCrFcHmYanPgxcmPZoy1ngfACTK0fk3Eg-Y94T4DtC-f0PHSlA03CFMBVxYYOULwMR8_FyTbvR9Hog5h0whHxuwGuVcYTh7CpAc2fUA6H1DDXU1KOn7REVzSCHqBZ0oG1OroqfpgARFeiDmxt3-ciHFPzmmIm5cpcOC4Uhs7suhbegh9TV-ZMOuT1ZRduPoC1XMRsauByeDRsv0kEe-7rnq2ebNkfBkexYKjlDd4vJ8SlzknWO3Im9HrZ6BkY6Oyk_e5qh_Yv7nrX4y2qPRBZ4odlDpHvXOl61SvOux9BAPIO7MkM7X9RpCbei-daXubvtSjJ31AfLt_9HoFrFeww-TqaPmmDOsqra2Y1EaAu6L5kt8owY94g4-DwYQFupfS9A9oDi145ol0BwsAvFc3ohXsmlJoX37SISobX5FdoPZB-hBZ37h5bdOv61PwNcq4bLMp6Au7kp-fdG2H5uSNqkQTTI1YU2QFHOHqGdAGW-O4QQ9i9HFWtHaOvHNtL8TPWFh-EFD06YBjaxAFhjx1oak3Ej9QdoqyHNApjjLcXg3QYiYDjJYza09kclXJu3XnnhWiPLKiO3blse9h8gglURcUOBOPc8EX2LUHK4EWpSee6BXviuyxECg'
 
 
+def get_spotify_token(sp_dc):
+    response = requests.get('https://open.spotify.com/get_access_token?reason=transport&productType=web_player',
+                            headers={
+                                'Cookie': f'sp_dc={sp_dc}'
+                            }).json()
 
-pprint(requests.get('https://accounts.spotify.com/login/password', data={
-    'username':'svyatoslavsvyatkin@yandex.ru',
-    'password':'Qweasd228!'
-}).text)
+    pprint(response)
 
-pprint(requests.get('https://guc-spclient.spotify.com/presence-view/v1/buddylist',
-    headers= headers
-    ).json())
+    return response['accessToken']
 
-print('--------')
-pprint(
-    requests.get('https://open.spotify.com/get_access_token?reason=transport&productType=web_player',
-                 headers={
-                     'Cookie' : f'sp_dc={sp_dc}'
-                 }).json()
-)
+
+def get_token(code):
+    response = requests.get(f'https://api.spotify.com/v1/token',
+                            data={'code': code})
+
+    return response.text
+
+
+class SpotifyToken:
+    def __init__(self, sp_dc):
+        self.token = get_spotify_token(sp_dc)
+
+        pprint(self.token)
+
+    def get(self, method, **kwargs):
+        response = requests.get(f'https://api.spotify.com/v1/{method}',
+                                headers={'Authorization': f'Bearer {self.token}', 'Content-Type': 'application/json'},
+                                data=kwargs)
+
+        return response.json()
+
+    def top(self, type_, term):
+        if term not in ('long', 'medium', 'short') or type_ not in ('tracks', 'artists'):
+            return None
+
+        response_json = self.get(f'top/{type_}', time_range=f'{term}_term')
+        return response_json
+
+    def current_playback(self):
+        response_json = self.get('player/currently-playing')
+        return response_json
+
+    def me(self):
+        response_json = self.get('me')
+        return response_json
+
+    def track(self, id_):
+        response_json = self.get(f'tracks/{id_}')
+        return response_json
+
+    def artist(self, id_):
+        response_json = self.get(f'artists/{id_}')
+        return response_json
+
+
+pprint(get_token(tk))
