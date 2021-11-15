@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<main class="row">
+
+    {% for profile in data %}
+        <div class="block">
+            <a href='/{{ profile[' id'] }}' class="link"><img src={% if profile["images"] %}' {{ profile["images"][0]["url"] }}' {% else %}'/static/img/empty-profile.png' {% endif %}></a>
+            <div><a href='/{{ profile[' id'] }}' class="link">{{ profile['display_name'] }}</a></div>
+        </div>
+    {% endfor %}
+
+</main>
+
+
+{% endblock %}

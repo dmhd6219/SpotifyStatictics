@@ -87,6 +87,23 @@ def profile(spotify: Spotify, id):
     return render_template('profile.html', **data)
 
 
+@app.route('/profiles')
+@spotify_login_required
+def profiles(spotify: Spotify):
+    db_sess = db_session.create_session()
+
+    query = db_sess.query(User).all()
+
+    data = []
+
+    for user in query:
+        user_spotify = Spotify(auth_manager=user.spotify_auth_manager)
+
+        data.append(user_spotify.me())
+
+    return render_template('profiles.html', data=data, profile=spotify.me())
+
+
 if __name__ == '__main__':
     db_session.global_init("./db/data.sqlite")
 

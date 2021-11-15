@@ -91,10 +91,6 @@ def spotify_login_required(func):
         # Step 4. Signed in, display data
         spotify = spotipy.Spotify(auth_manager=auth_manager)
 
-        # if not user.spotify_id or user.spotify_id != spotify.current_user()['id']:
-        # user.spotify_id = spotify.current_user()['id']
-        # db_sess.commit()
-
         if args:
             return func(*args, **kwargs)
 
@@ -111,4 +107,3 @@ def get_spotify_token(sp_dc):
                             }).json()
 
     return response['accessToken']
-
