@@ -41,24 +41,15 @@ def index(spotify: Spotify):
 @app.route('/me')
 @spotify_login_required
 def me(spotify: Spotify):
-    data = {
-        'profile': api.me(spotify).json['data'],
-
-    }
-
     db_sess = db_session.create_session()
 
-    user = db_sess.query(User).filter(User.email == data['profile']['email']).first()
+    user = db_sess.query(User).filter(User.email == api.me(spotify).json['data']['email']).first()
     if user.link:
         return redirect(f'/profile/{user.link}')
     if not user.link:
         return redirect(f'/profile/{user.spotify_id}')
 
-    data['top_track'] = spotify.track(user.favorite_track)
-    data['top_artist'] = spotify.artist(user.favorite_artist)
-    data['playback'] = api.playback(spotify).json.get('data'),
-
-    return render_template('profile.html', **data)
+    return render_template('profile.html')
 
 
 @app.route('/profile/<id>')
@@ -71,20 +62,62 @@ def profile(spotify: Spotify, id):
     if not user:
         query = db_sess.query(User).filter(User.spotify_id == id)
         user = query.first()
-    if not user:
-        abort(404)
+        if not user:
+            abort(404)
+        if user.link:
+            return redirect(f'/profile/{user.link}')
 
-    spotify = Spotify(auth_manager=user.spotify_auth_manager)
+    user_spotify = Spotify(auth_manager=user.spotify_auth_manager)
 
-    data = {'profile': api.me(spotify).json['data'], 'playback': api.playback(spotify).json.get('data'), }
+    data = {'me': api.me(spotify).json['data'],
+            'playback': api.playback(user_spotify).json.get('data'),
+            'profile': api.me(user_spotify).json['data'],
+            'top_genres': api.stats(user_spotify, 'genres', 'long').json['data'][:6],
+            'status': user.status,
+
+            }
 
     if user.favorite_track:
-        data['top_track'] = spotify.track(user.favorite_track)
+        data['top_track'] = user_spotify.track(user.favorite_track)
 
     if user.favorite_artist:
-        data['top_artist'] = spotify.artist(user.favorite_artist)
+        data['top_artist'] = user_spotify.artist(user.favorite_artist)
 
     return render_template('profile.html', **data)
+
+
+@app.route('/stats/<id>/<type>/<term>')
+@spotify_login_required
+def stats(spotify: Spotify, id, type, term):
+    if type not in ('tracks', 'artists'):
+        abort(404)
+    if term not in ('short', 'medium', 'long'):
+        abort(404)
+
+    db_sess = db_session.create_session()
+
+    query = db_sess.query(User).filter(User.link == id)
+    user = query.first()
+    if not user:
+        query = db_sess.query(User).filter(User.spotify_id == id)
+        user = query.first()
+        if not user:
+            abort(404)
+        if user.link:
+            return redirect(f'/profile/{user.link}')
+
+    user_spotify = Spotify(auth_manager=user.spotify_auth_manager)
+
+    data = {'me': api.me(spotify).json['data'],
+            'playback': api.playback(user_spotify).json.get('data'),
+            'profile': api.me(user_spotify).json['data'],
+            'data': api.stats(user_spotify, type, term).json['data'],
+            'term': term
+            }
+    if type == 'artists':
+        return render_template('artists.html', **data)
+    if type == 'tracks':
+        return render_template('tracks.html', **data)
 
 
 @app.route('/profiles')
@@ -101,7 +134,7 @@ def profiles(spotify: Spotify):
 
         data.append(user_spotify.me())
 
-    return render_template('profiles.html', data=data, profile=spotify.me())
+    return render_template('profiles.html', data=data, me=spotify.me())
 
 
 if __name__ == '__main__':

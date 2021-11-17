@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{%
+set terms = {'short' : 'last 4 weeks', 'medium':'last 6 months', 'long':'all time'}
+%}
+
+<main>
+
+    <h2 class="text-center"><a href="/profile/{{ profile['id'] }}" class="link">{{ profile['display_name'] }}</a>'s Top Artists ({{ terms[term] }})</h2>
+    <ul class="mini-navbar">
+        <li class="active">  Artists  </li>
+        <li><a class="link" href="/stats/{{ profile['id'] }}/tracks/{{term}}" > Tracks </a></li>
+    </ul>
+    <ul class="mini-navbar">
+        {% for t in terms.keys() %}
+            {% if term == t %}
+                <li class="active">  {{ terms[t] }}  </li>
+            {% else %}
+                <li><a class="link" href="/stats/{{ profile['id'] }}/artists/{{t}}" > {{ terms[t] }} </a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <div class='data row'>
+        {% for artist in data %}
+            <div class="artist">
+                <figure>
+                    <a target="_blank" href=" {{ artist['external_urls']['spotify'] }} " class="hover-image-scale"><img src="{{ artist['images'][0]['url'] }}" class="hover-image-scale"></a>
+                    <figcaption><span>{{ loop.index|string() + '. '}}</span><a class="link" target="_blank" href=" {{ artist['external_urls']['spotify'] }} ">{{ artist['name'] }}</a></figcaption>
+                </figure>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="button">  </div>
+
+</main>
+
+
+{% endblock %}

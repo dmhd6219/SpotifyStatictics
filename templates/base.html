@@ -30,13 +30,13 @@
             <ul>
                 <li><a href="/" class="link">svyatoslavsvyatkin</a></li>
                 <li><a href="/profiles" class="link">Profiles</a></li>
-                <li><a href="/stats" class="link">Statistics</a></li>
+                <li><a href="/stats/{{ me['id'] }}/artists/long" class="link">Statistics</a></li>
             </ul>
 
             <div class='nav-profile'>
-                <img src={% if profile["images"] %}' {{ profile["images"][0]["url"] }}' {% else %} '/static/img/empty-profile.png' {% endif %}>
+                <img src={% if me["images"] %}' {{ me["images"][0]["url"] }}' {% else %} '/static/img/empty-profile.png' {% endif %}>
                 <div class='pop'>
-                    <a href='/me' class="link">{{ profile['display_name'] }}</a>
+                    <a href='/me' class="link">{{ me['display_name'] }}</a>
                 </div>
             </div>
         </nav>

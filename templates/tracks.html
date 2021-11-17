@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{%
+set terms = {'short' : 'last 4 weeks', 'medium':'last 6 months', 'long':'all time'}
+%}
+
+<main>
+
+    <h2 class="text-center"><a href="/profile/{{ profile['id'] }}" class="link">{{ profile['display_name'] }}</a>'s Top Artists ({{ terms[term] }})</h2>
+    <ul class="mini-navbar">
+        <li><a class="link" href="/stats/{{ profile['id'] }}/artists/{{term}}" > Artists </a></li>
+        <li class="active">  Tracks  </li>
+    </ul>
+    <ul class="mini-navbar">
+        {% for t in terms.keys() %}
+            {% if term == t %}
+                <li class="active">  {{ terms[t] }}  </li>
+            {% else %}
+                <li><a class="link" href="/stats/{{ profile['id'] }}/tracks/{{t}}" > {{ terms[t] }} </a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <div class='tracks'>
+        {% for track in data %}
+            <div class="block-test">
+                <div class="card-test" style="background-image: url('{{ track['album']['images'][-1]['url'] }}');">
+                    <div class="blur">
+                            <a href=" {{ track['album']['external_urls']['spotify'] }} "><img
+                                src="{{ track['album']['images'][0]['url'] }}"
+                                draggable="false"></a>
+                            <div class="card_info">
+
+                            </div>
+                    </div>
+                </div>
+
+                <p class="caption-test">{% for artist in track['artists'] %} <a href=" {{ artist['external_urls']['spotify'] }} " class="link" target="_blank">{{artist['name']}}</a>{% if not loop.last %}, {% endif %}
+                     {% endfor %} - <a href=" {{ track['external_urls']['spotify'] }} " class="link" target="_blank">{{ track['name'] }}</a>
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+
+</main>
+
+{% endblock %}

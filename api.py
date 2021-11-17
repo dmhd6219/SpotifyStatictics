@@ -33,11 +33,20 @@ def stats(spotify: Spotify, type_, term):
     if type_ == 'artists':
         top_artists = []
         for i in range(5):
-            for artist in spotify.current_user_top_artists(limit=20, offset=20 * i, time_range='long_term')['items']:
+            for artist in spotify.current_user_top_artists(limit=20, offset=20 * i, time_range=term + '_term')['items']:
                 top_artists.append(artist)
         return make_response(jsonify({'success': 'ok', 'data': top_artists}), 200)
 
-    return make_response(jsonify({'error': f'There no "{type_}" type. Try artists or tracks.'}))
+    if type_ == 'genres':
+        top_genres = []
+        for i in range(5):
+            for artist in spotify.current_user_top_artists(limit=20, offset=20 * i, time_range=term + '_term')['items']:
+                for genre in artist['genres']:
+                    if genre not in top_genres:
+                        top_genres.append(genre)
+        return make_response(jsonify({'success': 'ok', 'data': top_genres}), 200)
+
+    return make_response(jsonify({'error': f'There no "{type_}" type. Try artists, tracks or genres.'}))
 
 
 def me(spotify: Spotify):
