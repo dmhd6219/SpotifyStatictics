@@ -3,7 +3,7 @@
 {% block content %}
 
 
-<main class="row">
+<main class="row ">
     <div class="profile-block">
 
         <div class="profile">
@@ -15,7 +15,9 @@
                     <div class="data-block">Subscribers : {{ profile['followers']['total'] }}</div>
                     <div class="data-block">likes : 0</div>
                 </div>
-                <div class="data-block">{% if status %} {{ status }} {% else %} This user loves to listen to music and does not like to set statuses.  {% endif %}</div>
+                <div class="data-block">{% if status %} {{ status }} {% else %} This user loves to listen to music and
+                    does not like to set statuses. {% endif %}
+                </div>
             </div>
         </div>
 
@@ -38,24 +40,24 @@
         {% set track = playback['item'] %}
         <div>{% if playback['is_playing'] %} Listening now {% else %} Last time listened {% endif %}</div>
         {% if track['album'].get('images') %}
-            <img src="{{ track['album']['images'][0]['url'] }}">
-            <div>
-                <div>{% for artist in track['artists'] %} <a href=" {{ artist['external_urls']['spotify'] }} " class="link"
-                                                             target="_blank">{{artist['name']}}</a>{% if not loop.last %},
-                    {% endif %}
-                    {% endfor %} - <a href=" {{ track['external_urls']['spotify'] }} " class="link" target="_blank">{{
-                        track['name'] }}</a></div>
-                <div>Album: <a href="{{ track['album']['external_urls']['spotify'] }}" class="link" target="_blank">{{
-                    track['album']['name'] }}</a></div>
-            </div>
+        <img src="{{ track['album']['images'][0]['url'] }}">
+        <div>
+            <div>{% for artist in track['artists'] %} <a href=" {{ artist['external_urls']['spotify'] }} " class="link"
+                                                         target="_blank">{{artist['name']}}</a>{% if not loop.last %},
+                {% endif %}
+                {% endfor %} - <a href=" {{ track['external_urls']['spotify'] }} " class="link" target="_blank">{{
+                    track['name'] }}</a></div>
+            <div>Album: <a href="{{ track['album']['external_urls']['spotify'] }}" class="link" target="_blank">{{
+                track['album']['name'] }}</a></div>
+        </div>
         {% else %}
-            <img src="/static/img/note.png">
-            <div>
-                <div>{% for artist in track['artists'] %} {{artist['name']}} {% if not loop.last %}, {% endif %}
-                    {% endfor %} - {{ track['name'] }}
-                </div>
-                <div>Album: {{ track['album'].get('name') }}</div>
+        <img src="/static/img/note.png">
+        <div>
+            <div>{% for artist in track['artists'] %} {{artist['name']}} {% if not loop.last %}, {% endif %}
+                {% endfor %} - {{ track['name'] }}
             </div>
+            <div>Album: {{ track['album'].get('name') }}</div>
+        </div>
         {% endif %}
 
     </div>

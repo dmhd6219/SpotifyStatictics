@@ -52,6 +52,17 @@ def me(spotify: Spotify):
     return render_template('profile.html')
 
 
+@app.route('/me/edit')
+@spotify_login_required
+def edit(spotify: Spotify):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.email == api.me(spotify).json['data']['email']).first()
+
+    data = {'me': api.me(spotify).json['data'], }
+
+    return render_template('edit_profile.html', **data)
+
+
 @app.route('/profile/<id>')
 @spotify_login_required
 def profile(spotify: Spotify, id):
@@ -104,7 +115,7 @@ def stats(spotify: Spotify, id, type, term):
         if not user:
             abort(404)
         if user.link:
-            return redirect(f'/profile/{user.link}')
+            return redirect(f'/stats/{user.link}/{type}/{term}')
 
     user_spotify = Spotify(auth_manager=user.spotify_auth_manager)
 
