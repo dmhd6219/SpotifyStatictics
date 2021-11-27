@@ -28,7 +28,7 @@ set terms = {'short' : 'last 4 weeks', 'medium':'last 6 months', 'long':'all tim
             <div class="block-test">
                 <div class="card-test" style="background-image: url('{{ track['album']['images'][-1]['url'] }}');">
                     <div class="blur">
-                            <a href=" {{ track['album']['external_urls']['spotify'] }} "><img
+                            <a href=" {{ track['album']['external_urls']['spotify'] }} " target="_blank"><img
                                 src="{{ track['album']['images'][0]['url'] }}"
                                 draggable="false"></a>
                             <div class="card_info">

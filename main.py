@@ -52,13 +52,30 @@ def me(spotify: Spotify):
     return render_template('profile.html')
 
 
-@app.route('/me/edit')
+@app.route('/me/edit', methods=['POST', 'GET'])
 @spotify_login_required
 def edit(spotify: Spotify):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.email == api.me(spotify).json['data']['email']).first()
+    errors = []
 
-    data = {'me': api.me(spotify).json['data'], }
+    if request.method == 'POST':
+        status = request.form['status']
+        link = request.form['link']
+
+        correct = True
+        for symbol in status + link:
+            if not symbol.isalpha():
+                correct = False
+                break
+        if correct:
+            user.status = status
+            user.link = link
+            db_sess.commit()
+        else:
+            errors.append('USE ONLY LETTERS')
+
+    data = {'me': api.me(spotify).json['data'], 'status': user.status, 'link': user.link, 'errors' : errors}
 
     return render_template('edit_profile.html', **data)
 

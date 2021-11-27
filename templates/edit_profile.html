@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<main class="row ">
+
+    <div class="profile-edit">
+        <img src={% if me["images"] %}' {{ me["images"][0]["url"] }}' {% else %}
+        '/static/img/empty-profile.png' {% endif %}>
+        <a class="link data-block" href='#'>{{ me['display_name'] }}</a>
+
+        <div> {{status}} </div>
+
+        {% if errors %}
+            {% for error in errors %}
+                <div>Error : {{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form class="login_form" method="post">
+            <div class="form__group field">
+                <input type="input" class="form__field" placeholder="Name" name="status" id='status' value="{% if status %}{{ status }}{% endif %}"/>
+                <label for="status" class="form__label">Status</label>
+            </div>
+
+            <div class="form__group field">
+                <input type="input" class="form__field" placeholder="Name" name="link" id='link' value="{% if link %}{{ link }}{% endif %}"/>
+                <label for="link" class="form__label">Link</label>
+            </div>
+
+            <button type="submit" class="">Save</button>
+
+        </form>
+    </div>
+
+</main>
+
+
+{% endblock %}

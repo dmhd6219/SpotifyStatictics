@@ -13,10 +13,12 @@
                 <a class="link data-block" href='#'>{{ profile['display_name'] }}</a>
                 <div class="mini-data">
                     <div class="data-block">Subscribers : {{ profile['followers']['total'] }}</div>
-                    <div class="data-block">likes : 0</div>
                 </div>
                 <div class="data-block">{% if status %} {{ status }} {% else %} This user loves to listen to music and
                     does not like to set statuses. {% endif %}
+                </div>
+                <div class="pop-line">
+                    <div class="pop pop-data"><a class="link" href="/me/edit">edit</a></div>
                 </div>
             </div>
         </div>
