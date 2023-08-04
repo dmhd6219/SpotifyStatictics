@@ -1,6 +1,6 @@
 # Spotify Music Profile Statistics Web App
 
-![License](https://img.shields.io/github/license/dmhd6219/SpotifyStatictics)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Python](https://img.shields.io/badge/python-blue)
 ![Flask](https://img.shields.io/badge/flask-orange)
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
