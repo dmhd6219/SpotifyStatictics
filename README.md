@@ -61,7 +61,7 @@ Replace `your_spotify_client_id` and `your_spotify_client_secret` with the crede
 1. Run the Flask development server:
 
 ```bash
-python app.py
+python main.py
 ```
 
 2. Open your web browser and go to `http://localhost:8080`.
