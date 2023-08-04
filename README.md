@@ -48,7 +48,7 @@ credentials. Follow these steps:
 2. Create a new application and note down the `Client ID` and `Client Secret`.
 3. In the project directory, create a new file named `.env` and add the following lines:
 
-```python
+```env
 SPOTIPY_CLIENT_ID = 'your_spotify_client_id'
 SPOTIPY_CLIENT_SECRET = 'your_spotify_client_secret'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback'  # Change this if required
